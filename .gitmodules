@@ -1,0 +1,3 @@
+[submodule "content/blog"]
+	path = content/blog
+	url = git@github.com:khartson/portfolio-blog-content.git
