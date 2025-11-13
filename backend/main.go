@@ -22,6 +22,7 @@ func healthHandler(c echo.Context) error {
 }
 
 func main() {
+
 	e := echo.New()
 
 	e.Use(middleware.Logger())
