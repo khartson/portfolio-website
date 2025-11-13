@@ -1,56 +1,45 @@
-# 🚀 Portfolio Website Frontend
+# 🚀 Frontend Setup: React, TypeScript, and Tailwind CSS
 
-## Overview
+This guide will walk you through initializing a new Next.js project with TypeScript and configuring Tailwind CSS, setting the stage for integrating your `VSCodePortfolio.tsx` component.
 
-This directory contains the Next.js application that serves as the main user interface for the portfolio website. It is a highly responsive, fast, and modern static/server-rendered application designed for performance (Lighthouse scores are paramount).
+## 1. Initialize the Next.js Project
 
-It operates as a hybrid application:
+Next.js provides an excellent CLI tool that sets up the required boilerplate for React, TypeScript, and modern tooling, including Tailwind CSS configuration.
 
-1. **Static/SSG:** Reads Markdown files from the local `content/blog` submodule for blog posts and article content.
+1. **Navigate to the Root Directory:** Make sure you are in the overall project root where the `frontend/` folder should reside.
     
-2. **Server-Side:** Interacts with the Go Backend API for dynamic data like contact form submissions, project metadata, and authentication.
+    ```
+    # Assuming you are in the project root
+    npx create-next-app@latest frontend
+    
+    ```
+    
+2. **CLI Prompts:** When prompted, choose the following options to match the project structure:
+    
+    |Prompt|Recommended Answer|
+    |---|---|
+    |**Project Name?**|`frontend`|
+    |**TypeScript?**|`Yes`|
+    |**ESLint?**|`Yes`|
+    |**Tailwind CSS?**|`Yes`|
+    |**`src/` directory?**|`No`|
+    |**Would you like to use React Compiler?**|`Yes` (Highly Recommended)|
+    |**App Router?**|`Yes`|
+    |**Import alias?**|`No`|
+    
+3. **Navigate into the New Directory:**
+    
+    ```
+    cd frontend
+    
+    ```
     
 
-## Tech Stack
+## 2. Install Additional Dependencies
 
-|Technology|Purpose|
-|---|---|
-|**Next.js**|React Framework for SSG/SSR|
-|**TypeScript**|Language for strong typing and maintainability|
-|**Tailwind CSS**|Utility-first CSS framework for rapid, responsive styling|
-|**React**|Component-based UI library|
-
-## Local Development
-
-### 1. Prerequisites
-
-Ensure you have Node.js (v18+) and npm installed.
-
-### 2. Install Dependencies
+The component uses **Lucide React** for icons, which needs to be installed separately.
 
 ```
-npm install
-```
-
-### 3. Run Development Server
-
-This starts the Next.js environment with hot reloading. The application will be accessible at `http://localhost:3000`.
+npm install lucide-react
 
 ```
-npm run dev
-```
-
-### 4. Build for Production
-
-To create an optimized production build (including static asset generation):
-
-```
-npm run build
-npm run start
-```
-
-## Data Sources
-
-- **Local Files:** Content in `../content/blog/*.md` is processed at build time for blog routes.
-    
-- **Go API:** Consumes data from the `../backend` service (e.g., `/api/projects`, `/api/contact`).
