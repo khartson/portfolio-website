@@ -33,7 +33,7 @@ A Full-Stack Engineer and Infrastructure specialist with a passion for scalable 
         icon: ScrollText,
         language: 'pdf',
         // In a real app, this would be a secure URL to a PDF in S3 or another storage
-        content: 'https://placehold.co/800x600/1e293b/d4d4d8?text=Placeholder+for+Resume.pdf',
+        content: '/Resume_November_2025.pdf',
       },
       {
         id: 'docs-contact',
