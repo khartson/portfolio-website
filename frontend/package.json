@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@wooorm/starry-night": "^3.8.0",
+    "devicons-react": "^1.5.0",
+    "hast-util-to-html": "^9.0.5",
     "lucide-react": "^0.553.0",
     "next": "16.0.3",
     "react": "19.2.0",

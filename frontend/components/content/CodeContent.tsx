@@ -1,39 +1,93 @@
-import React, { FC } from 'react';
-import { FileTreeEntry } from '../../types/portfolio';
+'use client';
 
-// NOTE: This component is now ready for integration with @wooorm/starry-night.
-// Due to the complexity of asynchronous grammar loading required by starry-night,
-// this component currently renders the raw code within a styled <pre> block.
-//
-// To complete the integration:
-// 1. In a utility function, use `createStarryNight` to load the necessary grammars.
-// 2. Pass the file's content to the `starry-night` instance to get the VDOM/HTML output.
-// 3. Render that output using `dangerouslySetInnerHTML` inside the <pre> tag below.
+import React, { FC, useMemo } from 'react';
+import { FileTreeEntry } from '../../types/portfolio';
+import { useSyntaxHighlight } from '../../utils/useSyntaxHighlight';
 
 interface CodeContentProps {
   entry: FileTreeEntry;
 }
 
 const CodeContent: FC<CodeContentProps> = ({ entry }) => {
-
-  // For now, we apply VSCode styling to a raw <pre> block.
-  // When integrated with starry-night, the HTML output should be rendered inside this structure.
-  // The 'entry.language' can be used to load the correct grammar for the highlighter.
+  // Use Starry Night for syntax highlighting
+  const highlightedHtml = useSyntaxHighlight(entry.content, entry.language);
+  
+  // Fallback: Generate HTML with line numbers while highlighting loads or if it fails
+  const fallbackHtml = useMemo(() => {
+    const lines = entry.content.split('\n');
+    
+    // Escape HTML to prevent XSS issues
+    const escapeHtml = (text: string) => {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+    
+    return lines.map((line, index) => {
+      const escapedLine = escapeHtml(line || ' ');
+      return `<div class="flex group hover:bg-zinc-800/30">
+        <span class="pr-4 pl-4 text-zinc-500 text-right w-12 select-none group-hover:bg-zinc-700/50">${index + 1}</span>
+        <span class="flex-grow whitespace-pre pr-4">${escapedLine}</span>
+      </div>`;
+    }).join('');
+  }, [entry.content]);
+  
+  // Combine highlighted code with line numbers
+  const finalHtml = useMemo(() => {
+    if (!highlightedHtml) {
+      // Still loading or failed, use fallback
+      return fallbackHtml;
+    }
+    
+    // Starry Night returns HTML, we need to split it by lines and add line numbers
+    // The HTML might contain <span> elements with syntax classes
+    // We'll split by <br> tags or newlines and wrap each line
+    
+    // Remove <pre> and <code> wrapper tags if present, keep the inner content
+    let codeContent = highlightedHtml
+      .replace(/^<pre[^>]*>/, '')
+      .replace(/<\/pre>$/, '')
+      .replace(/^<code[^>]*>/, '')
+      .replace(/<\/code>$/, '');
+    
+    // Split by <br> tags or newlines
+    const lines = codeContent.split(/<br\s*\/?>/i).map(line => line.trim());
+    
+    // If no <br> tags, try splitting by literal \n (might be escaped)
+    if (lines.length === 1) {
+      const splitByNewline = codeContent.split(/\n/);
+      if (splitByNewline.length > 1) {
+        return splitByNewline.map((line, index) => {
+          const lineContent = line || ' ';
+          return `<div class="flex group hover:bg-zinc-800/30">
+            <span class="pr-4 pl-4 text-zinc-500 text-right w-12 select-none group-hover:bg-zinc-700/50">${index + 1}</span>
+            <span class="flex-grow whitespace-pre pr-4">${lineContent}</span>
+          </div>`;
+        }).join('');
+      }
+    }
+    
+    return lines.map((line, index) => {
+      // Line might be empty or contain HTML from Starry Night
+      const lineContent = line || ' ';
+      return `<div class="flex group hover:bg-zinc-800/30">
+        <span class="pr-4 pl-4 text-zinc-500 text-right w-12 select-none group-hover:bg-zinc-700/50">${index + 1}</span>
+        <span class="flex-grow whitespace-pre pr-4">${lineContent}</span>
+      </div>`;
+    }).join('');
+  }, [highlightedHtml, fallbackHtml]);
 
   return (
     <div className="h-full overflow-y-auto bg-[#1e1e1e] p-0 font-mono text-sm">
-      <pre
-        className="p-8 leading-relaxed text-zinc-300 h-full overflow-auto"
-        style={{
-          margin: 0,
-          background: '#1e1e1e', // Match editor background
-          fontSize: '0.875rem', // text-sm
-          // Add basic syntax look-alikes until starry-night is integrated:
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-        }}
-      >
-        {entry.content}
+      <pre className="p-0 m-0 border-none overflow-visible leading-relaxed">
+        {/* Rendered HTML with syntax highlighting from Starry Night */}
+        <div 
+          className={`language-${entry.language}`}
+          dangerouslySetInnerHTML={{ __html: finalHtml }} 
+        />
       </pre>
     </div>
   );

@@ -21,6 +21,7 @@ const FileRenderer: FC<FileRendererProps> = ({ activeFile }) => {
     case 'python':
     case 'ruby':
     case 'ini':
+    case 'go':
     // case 'hcl':
     case 'json':
       return <CodeContent {...props} />;

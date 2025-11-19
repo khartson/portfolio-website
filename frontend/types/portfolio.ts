@@ -6,8 +6,9 @@ export interface FileTreeEntry {
   name: string; // Display name (e.g., 'README.md')
   type: 'file' | 'folder';
   icon: ElementType; // Lucide icon component (passed as ElementType)
-  language: 'markdown' | 'python' | 'ruby' | 'ini' | 'pdf' | 'json' | 'default'; // The rendering format
+  language: 'markdown' | 'python' | 'ruby' | 'ini' | 'pdf' | 'json' | 'go' | 'default'; // The rendering format
   content: string; // The raw text, code, or URL content
+  path?: string; // Optional: file path for future backend integration
   children?: FileTreeEntry[]; // Required only if type is 'folder'
 }
 
